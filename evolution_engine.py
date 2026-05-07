@@ -440,7 +440,7 @@ class AgentEvolutionEngine:
             "strategy_timestamp": datetime.now().isoformat(),
             "current_fitness": metrics.overall_fitness,
             "target_fitness": min(metrics.overall_fitness + 0.15, 1.0),
-            "evolution_actions": evolution_actions[:self.max_evolution_actions],
+            "evolution_actions": [self._serialize_action(action) for action in evolution_actions[:self.max_evolution_actions]],
             "estimated_evolution_time": len(evolution_actions) * 30,  # seconds
             "risk_assessment": self._assess_plan_risk(evolution_actions)
         }
@@ -464,11 +464,17 @@ class AgentEvolutionEngine:
 
         for action in actions:
             try:
+                # アクションが辞書形式でない場合はEvolutionActionオブジェクトとして処理
+                if isinstance(action, dict):
+                    action_dict = action
+                else:
+                    action_dict = self._serialize_action(action)
+
                 # アクションタイプに応じた実行ロジック
-                action_result = await self._execute_single_action(action, agent_id)
+                action_result = await self._execute_single_action(action_dict, agent_id)
 
                 execution_results["actions"].append({
-                    "action": action,
+                    "action": action_dict,
                     "result": action_result,
                     "success": action_result.get("success", False),
                     "improvement": action_result.get("improvement", 0.0)
@@ -497,7 +503,7 @@ class AgentEvolutionEngine:
 
     async def _execute_single_action(
         self,
-        action: EvolutionAction,
+        action: Dict[str, Any],
         agent_id: str
     ) -> Dict[str, Any]:
         """単一進化アクションの実行"""
@@ -505,40 +511,43 @@ class AgentEvolutionEngine:
         # シミュレーション的な実行 (実際の環境では具体的な処理を実装)
         await asyncio.sleep(1)  # 実行時間をシミュレート
 
+        action_type = action.get("action_type", "unknown")
+        parameters = action.get("parameters", {})
+
         # アクションタイプに応じた処理
-        if action.action_type == "performance_optimization":
+        if action_type == "performance_optimization":
             return {
                 "success": True,
                 "improvement": 0.12,
                 "details": "API response time improved by 15%",
-                "applied_parameters": action.parameters
+                "applied_parameters": parameters
             }
-        elif action.action_type == "security_enhancement":
+        elif action_type == "security_enhancement":
             return {
                 "success": True,
                 "improvement": 0.22,
                 "details": "Security vulnerabilities patched",
-                "applied_parameters": action.parameters
+                "applied_parameters": parameters
             }
-        elif action.action_type == "cost_optimization":
+        elif action_type == "cost_optimization":
             return {
                 "success": True,
                 "improvement": 0.18,
                 "details": "Resource allocation optimized",
-                "applied_parameters": action.parameters
+                "applied_parameters": parameters
             }
-        elif action.action_type == "trend_adaptation":
+        elif action_type == "trend_adaptation":
             return {
                 "success": True,
                 "improvement": 0.14,
                 "details": "Algorithm updated with emerging techniques",
-                "applied_parameters": action.parameters
+                "applied_parameters": parameters
             }
         else:
             return {
                 "success": False,
                 "improvement": 0.0,
-                "details": f"Unknown action type: {action.action_type}",
+                "details": f"Unknown action type: {action_type}",
                 "error": "Action not implemented"
             }
 
@@ -670,6 +679,7 @@ class AgentEvolutionEngine:
         if not evolution_actions:
             return {"overall_risk": 0.0, "risk_factors": []}
 
+        # EvolutionAction オブジェクトとして処理
         avg_risk = sum(action.risk_level for action in evolution_actions) / len(evolution_actions)
         high_risk_actions = [action for action in evolution_actions if action.risk_level > 0.7]
 
@@ -1664,3 +1674,14 @@ class AgentEvolutionEngine:
             })
 
         return patterns
+
+    def _serialize_action(self, action: EvolutionAction) -> Dict[str, Any]:
+        """EvolutionAction dataclass を辞書に変換"""
+        return {
+            "action_type": action.action_type,
+            "target_component": action.target_component,
+            "parameters": action.parameters,
+            "expected_improvement": action.expected_improvement,
+            "risk_level": action.risk_level,
+            "priority": action.priority.value if hasattr(action.priority, 'value') else str(action.priority)
+        }

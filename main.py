@@ -163,20 +163,20 @@ async def analyze_ecosystem(request: EcosystemAnalyzeRequest) -> EcosystemAnalyz
 
         # 進化計画生成
         evolution_plan = await evolution_engine.generate_evolution_plan(
-            ecosystem_analysis, request.constraints
+            ecosystem_analysis,
+            request.goals,
+            request.constraints
         )
 
         # 推定改善度計算
-        estimated_improvement = evolution_engine.calculate_improvement_potential(
-            ecosystem_analysis, evolution_plan
-        )
+        estimated_improvement = evolution_plan.get("estimated_improvement", 0)
 
         return EcosystemAnalyzeResponse(
-            evolution_plan=evolution_plan["actions"],
-            apis_to_replace=evolution_plan["replacements"],
-            apis_to_add=evolution_plan["additions"],
+            evolution_plan=[evolution_plan],  # Return the full plan as a list
+            apis_to_replace=evolution_plan.get("apis_to_replace", []),
+            apis_to_add=evolution_plan.get("apis_to_add", []),
             estimated_improvement=estimated_improvement,
-            implementation_steps=evolution_plan["steps"]
+            implementation_steps=[step.get("description", str(step)) for step in evolution_plan.get("implementation_steps", [])]
         )
 
     except Exception as e:
@@ -208,9 +208,8 @@ async def execute_evolution_plan(request: EvolutionExecuteRequest) -> EvolutionE
 
         # 進化実行
         execution_results = await evolution_engine.execute_evolution_plan(
-            ecosystem_id=request.ecosystem_id,
-            plan_id=request.evolution_plan_id,
-            auto_approve=request.auto_approve
+            request.evolution_plan_id,
+            request.ecosystem_id
         )
 
         # 実行後のパフォーマンス測定
@@ -219,10 +218,10 @@ async def execute_evolution_plan(request: EvolutionExecuteRequest) -> EvolutionE
         )
 
         return EvolutionExecuteResponse(
-            executed=execution_results["success"],
-            changes_made=execution_results["changes"],
-            new_performance_score=int(new_performance_score * 100),  # 0-100スケール
-            rollback_available=execution_results["rollback_available"]
+            executed=execution_results.get("overall_success", False),
+            changes_made=execution_results.get("step_results", []),
+            new_performance_score=int(new_performance_score.get("overall_health_score", 0.5) * 100),
+            rollback_available=True  # Always available in this implementation
         )
 
     except Exception as e:
