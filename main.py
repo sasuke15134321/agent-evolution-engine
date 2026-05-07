@@ -35,7 +35,39 @@ app.add_middleware(
 # グローバル進化エンジンインスタンス
 evolution_engine = AgentEvolutionEngine()
 
-# Pydantic Models
+# Pydantic Models for new API endpoints
+class EcosystemAnalyzeRequest(BaseModel):
+    ecosystem_id: str = Field(..., description="エコシステムID")
+    current_apis: List[str] = Field(..., description="現在使用中のAPIのURLリスト")
+    goals: List[str] = Field(..., description="進化目標のリスト")
+    constraints: Dict[str, Any] = Field(..., description="制約条件")
+
+class EcosystemAnalyzeResponse(BaseModel):
+    evolution_plan: List[Dict[str, Any]]
+    apis_to_replace: List[Dict[str, Any]]
+    apis_to_add: List[Dict[str, Any]]
+    estimated_improvement: int
+    implementation_steps: List[str]
+
+class EvolutionExecuteRequest(BaseModel):
+    ecosystem_id: str = Field(..., description="エコシステムID")
+    evolution_plan_id: str = Field(..., description="実行する進化計画ID")
+    auto_approve: bool = Field(default=False, description="自動承認フラグ")
+
+class EvolutionExecuteResponse(BaseModel):
+    executed: bool
+    changes_made: List[Dict[str, Any]]
+    new_performance_score: int
+    rollback_available: bool
+
+class Web3PaymentConfig(BaseModel):
+    endpoint: str
+    currency: str
+    amount: str
+    wallet_address: str
+    network: str
+
+# Legacy models (keeping for backward compatibility)
 class EvolutionRequest(BaseModel):
     agent_id: str = Field(..., description="対象エージェントID")
     current_config: Dict[str, Any] = Field(..., description="現在の設定")
@@ -76,8 +108,8 @@ async def root():
     """システム情報とAPIエンドポイント一覧"""
     return {
         "service": "Agent Evolution Engine API",
-        "version": "1.0.0",
-        "description": "AIエコシステム自律進化システム",
+        "version": "2.0.0",
+        "description": "AIエコシステム自律進化システム - Web3決済対応版",
         "integrated_apis": [
             "AI Trend Scout - トレンド分析",
             "Agent Memory - 学習履歴管理",
@@ -90,16 +122,210 @@ async def root():
             "リアルタイム性能最適化",
             "予測的セキュリティ強化",
             "動的コスト最適化",
-            "トレンド適応型アルゴリズム更新"
+            "トレンド適応型アルゴリズム更新",
+            "USDC決済による従量課金"
         ],
-        "endpoints": {
-            "evolution": "/api/evolve",
-            "status": "/api/status",
-            "history": "/api/history",
-            "prediction": "/api/predict",
-            "health": "/health"
+        "paid_endpoints": {
+            "analyze": "POST /api/evolution/analyze (0.20 USDC)",
+            "execute": "POST /api/evolution/execute (0.30 USDC)",
+            "history": "GET /api/evolution/history (0.05 USDC)"
+        },
+        "free_endpoints": {
+            "status": "GET /api/evolution/status",
+            "health": "GET /health",
+            "payment_config": "GET /.well-known/x402.json"
         }
     }
+
+# New Web3-enabled API endpoints with USDC pricing
+
+@app.post("/api/evolution/analyze", response_model=EcosystemAnalyzeResponse, tags=["Evolution - Web3"])
+async def analyze_ecosystem(request: EcosystemAnalyzeRequest) -> EcosystemAnalyzeResponse:
+    """
+    エコシステム進化分析エンドポイント（0.20 USDC）
+
+    AIエコシステムの現状を5つの統合APIで包括分析し、
+    最適な進化計画を自動生成します。
+
+    - 現在のAPI構成を詳細評価
+    - 目標達成のための最適戦略立案
+    - 制約条件を考慮した実現可能性検証
+    - コスト効率とリスクを両立した実装手順提示
+    """
+    try:
+        # エコシステム分析実行
+        ecosystem_analysis = await evolution_engine.analyze_ecosystem_for_evolution(
+            ecosystem_id=request.ecosystem_id,
+            current_apis=request.current_apis,
+            goals=request.goals,
+            constraints=request.constraints
+        )
+
+        # 進化計画生成
+        evolution_plan = await evolution_engine.generate_evolution_plan(
+            ecosystem_analysis, request.constraints
+        )
+
+        # 推定改善度計算
+        estimated_improvement = evolution_engine.calculate_improvement_potential(
+            ecosystem_analysis, evolution_plan
+        )
+
+        return EcosystemAnalyzeResponse(
+            evolution_plan=evolution_plan["actions"],
+            apis_to_replace=evolution_plan["replacements"],
+            apis_to_add=evolution_plan["additions"],
+            estimated_improvement=estimated_improvement,
+            implementation_steps=evolution_plan["steps"]
+        )
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Ecosystem analysis failed: {str(e)}")
+
+@app.post("/api/evolution/execute", response_model=EvolutionExecuteResponse, tags=["Evolution - Web3"])
+async def execute_evolution_plan(request: EvolutionExecuteRequest) -> EvolutionExecuteResponse:
+    """
+    進化計画実行エンドポイント（0.30 USDC）
+
+    分析済みの進化計画を実際に実行し、エコシステムを最適化します。
+
+    - 段階的な安全実行
+    - リアルタイム進捗監視
+    - 自動ロールバック対応
+    - パフォーマンス向上の即座測定
+    """
+    try:
+        # 進化計画取得
+        evolution_plan = await evolution_engine.get_evolution_plan(request.evolution_plan_id)
+
+        if not evolution_plan:
+            raise HTTPException(status_code=404, detail="Evolution plan not found")
+
+        # 実行前のベースライン測定
+        baseline_score = await evolution_engine.measure_ecosystem_performance(
+            request.ecosystem_id
+        )
+
+        # 進化実行
+        execution_results = await evolution_engine.execute_evolution_plan(
+            ecosystem_id=request.ecosystem_id,
+            plan_id=request.evolution_plan_id,
+            auto_approve=request.auto_approve
+        )
+
+        # 実行後のパフォーマンス測定
+        new_performance_score = await evolution_engine.measure_ecosystem_performance(
+            request.ecosystem_id
+        )
+
+        return EvolutionExecuteResponse(
+            executed=execution_results["success"],
+            changes_made=execution_results["changes"],
+            new_performance_score=int(new_performance_score * 100),  # 0-100スケール
+            rollback_available=execution_results["rollback_available"]
+        )
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Evolution execution failed: {str(e)}")
+
+@app.get("/api/evolution/status", tags=["Evolution - Web3"])
+async def get_evolution_status_v2(ecosystem_id: Optional[str] = None) -> Dict[str, Any]:
+    """
+    進化ステータス取得エンドポイント（無料）
+
+    エコシステムの現在の進化状況とヘルス情報を提供
+    """
+    try:
+        if ecosystem_id:
+            # 特定エコシステムのステータス
+            status = await evolution_engine.get_ecosystem_status(ecosystem_id)
+        else:
+            # 全エコシステムのステータス
+            status = await evolution_engine.get_all_ecosystems_status()
+
+        return {
+            "status": "success",
+            "ecosystem_id": ecosystem_id,
+            "current_state": status.get("state", "unknown"),
+            "performance_score": status.get("performance_score", 0),
+            "last_evolution": status.get("last_evolution"),
+            "active_plans": status.get("active_plans", 0),
+            "health_indicators": status.get("health", {}),
+            "next_recommended_action": status.get("next_action")
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Status retrieval failed: {str(e)}")
+
+@app.get("/api/evolution/history", tags=["Evolution - Web3"])
+async def get_evolution_history_v2(
+    ecosystem_id: Optional[str] = None,
+    limit: int = 20,
+    offset: int = 0
+) -> Dict[str, Any]:
+    """
+    進化履歴取得エンドポイント（0.05 USDC）
+
+    過去の進化サイクル、パフォーマンス改善履歴、学習データを提供
+    """
+    try:
+        history_data = await evolution_engine.get_detailed_evolution_history(
+            ecosystem_id=ecosystem_id,
+            limit=limit,
+            offset=offset
+        )
+
+        # 統計情報計算
+        total_evolutions = len(history_data)
+        successful_evolutions = len([h for h in history_data if h.get("success", False)])
+        avg_improvement = sum(h.get("improvement", 0) for h in history_data) / max(total_evolutions, 1)
+
+        return {
+            "status": "success",
+            "ecosystem_id": ecosystem_id,
+            "total_evolutions": total_evolutions,
+            "successful_evolutions": successful_evolutions,
+            "success_rate": successful_evolutions / max(total_evolutions, 1),
+            "average_improvement": avg_improvement,
+            "evolution_history": history_data,
+            "performance_trend": [h.get("performance_score", 0) for h in history_data],
+            "key_learnings": await evolution_engine.extract_key_learnings(history_data)
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"History retrieval failed: {str(e)}")
+
+@app.get("/health", tags=["System"])
+async def health_check_v2():
+    """システムヘルスチェック（無料）"""
+    return {
+        "status": "healthy",
+        "service": "Agent Evolution Engine API",
+        "version": "2.0.0",
+        "timestamp": datetime.now().isoformat(),
+        "evolution_engine_status": "operational",
+        "integrated_apis_count": len(evolution_engine.api_endpoints),
+        "total_evolutions_completed": len(evolution_engine.evolution_history),
+        "payment_system": "USDC Web3",
+        "supported_networks": ["base-mainnet"]
+    }
+
+@app.get("/.well-known/x402.json", response_model=Web3PaymentConfig, tags=["Web3 Payment"])
+async def get_web3_payment_config() -> Web3PaymentConfig:
+    """
+    Web3決済設定エンドポイント（無料）
+
+    USDC決済のためのウォレットアドレスとネットワーク情報
+    """
+    return Web3PaymentConfig(
+        endpoint="Agent Evolution Engine API",
+        currency="USDC",
+        amount="dynamic",  # エンドポイントによって動的
+        wallet_address=os.getenv("WALLET_ADDRESS", "0x742d35Cc6638Bb6431622EBC5234c2ED78DF0fAa"),
+        network=os.getenv("NETWORK", "base-mainnet")
+    )
+
+# Legacy endpoints (keeping for backward compatibility)
 
 @app.post("/api/evolve", response_model=EvolutionResponse, tags=["Evolution"])
 async def evolve_agent(

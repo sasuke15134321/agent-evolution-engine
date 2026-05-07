@@ -208,7 +208,7 @@ def test_ecosystem_analytics():
 
         print("\n予測メンテナンスアラート:")
         for alert in data['predictive_maintenance_alerts']:
-            print(f"  ⚠️ {alert}")
+            print(f"  [WARNING] {alert}")
 
         print("\nエコシステムトレンド:")
         trends = data['ecosystem_trends']
@@ -247,9 +247,9 @@ def test_comprehensive_scenario():
         if response.status_code == 200:
             result = response.json()
             evolution_results.append(result)
-            print(f"  ✅ {agent}: 改善度 {result['overall_improvement']:.2%}")
+            print(f"  [SUCCESS] {agent}: 改善度 {result['overall_improvement']:.2%}")
         else:
-            print(f"  ❌ {agent}: 進化失敗")
+            print(f"  [ERROR] {agent}: 進化失敗")
 
     print(f"\n=== 統合シナリオ結果 ===")
     print(f"成功したエージェント: {len(evolution_results)}/{len(agents)}")
@@ -263,7 +263,7 @@ def test_comprehensive_scenario():
 
 def main():
     """メインテスト実行"""
-    print("🚀 Agent Evolution Engine API 包括テスト開始")
+    print("[START] Agent Evolution Engine API 包括テスト開始")
     print("=" * 70)
 
     # 基本機能テスト
@@ -290,7 +290,7 @@ def main():
     test_comprehensive_scenario()
 
     print("\n" + "=" * 70)
-    print("🎉 Agent Evolution Engine API テスト完了!")
+    print("[SUCCESS] Agent Evolution Engine API テスト完了!")
     print("AIエコシステム自律進化システムの全機能が正常動作確認済み")
 
 if __name__ == "__main__":
