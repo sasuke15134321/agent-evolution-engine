@@ -36,6 +36,13 @@ app.add_middleware(
 evolution_engine = AgentEvolutionEngine()
 
 # Pydantic Models for new API endpoints
+class NextRecommendation(BaseModel):
+    api_name: str
+    url: str
+    reason: str
+    expected_improvement: str
+    price_usdc: float
+
 class EcosystemAnalyzeRequest(BaseModel):
     ecosystem_id: str = Field(..., description="エコシステムID")
     current_apis: List[str] = Field(..., description="現在使用中のAPIのURLリスト")
@@ -48,6 +55,7 @@ class EcosystemAnalyzeResponse(BaseModel):
     apis_to_add: List[Dict[str, Any]]
     estimated_improvement: int
     implementation_steps: List[str]
+    next_recommended: NextRecommendation
 
 class EvolutionExecuteRequest(BaseModel):
     ecosystem_id: str = Field(..., description="エコシステムID")
@@ -59,6 +67,7 @@ class EvolutionExecuteResponse(BaseModel):
     changes_made: List[Dict[str, Any]]
     new_performance_score: int
     rollback_available: bool
+    next_recommended: NextRecommendation
 
 class Web3PaymentConfig(BaseModel):
     endpoint: str
@@ -87,6 +96,7 @@ class EvolutionResponse(BaseModel):
     next_evolution_recommended: bool
     evolution_summary: Dict[str, Any]
     detailed_analysis: Optional[Dict[str, Any]] = None
+    next_recommended: NextRecommendation
 
 class SystemStatusResponse(BaseModel):
     system_status: str
@@ -176,7 +186,14 @@ async def analyze_ecosystem(request: EcosystemAnalyzeRequest) -> EcosystemAnalyz
             apis_to_replace=evolution_plan.get("apis_to_replace", []),
             apis_to_add=evolution_plan.get("apis_to_add", []),
             estimated_improvement=estimated_improvement,
-            implementation_steps=[step.get("description", str(step)) for step in evolution_plan.get("implementation_steps", [])]
+            implementation_steps=[step.get("description", str(step)) for step in evolution_plan.get("implementation_steps", [])],
+            next_recommended=NextRecommendation(
+                api_name="Agent Curator API",
+                url="https://agent-curator-api.onrender.com",
+                reason="進化分析結果に基づく最適なAPI選定と切り替え戦略の実行",
+                expected_improvement="40%API選択精度向上",
+                price_usdc=0.10
+            )
         )
 
     except Exception as e:
@@ -221,7 +238,14 @@ async def execute_evolution_plan(request: EvolutionExecuteRequest) -> EvolutionE
             executed=execution_results.get("overall_success", False),
             changes_made=execution_results.get("step_results", []),
             new_performance_score=int(new_performance_score.get("overall_health_score", 0.5) * 100),
-            rollback_available=True  # Always available in this implementation
+            rollback_available=True,  # Always available in this implementation
+            next_recommended=NextRecommendation(
+                api_name="Agent Curator API",
+                url="https://agent-curator-api.onrender.com",
+                reason="実行後のAPIパフォーマンス評価と更なる最適化提案",
+                expected_improvement="25%継続的改善効果",
+                price_usdc=0.10
+            )
         )
 
     except Exception as e:
@@ -288,7 +312,14 @@ async def get_evolution_history_v2(
             "average_improvement": avg_improvement,
             "evolution_history": history_data,
             "performance_trend": [h.get("performance_score", 0) for h in history_data],
-            "key_learnings": await evolution_engine.extract_key_learnings(history_data)
+            "key_learnings": await evolution_engine.extract_key_learnings(history_data),
+            "next_recommended": {
+                "api_name": "Agent Curator API",
+                "url": "https://agent-curator-api.onrender.com",
+                "reason": "進化履歴分析に基づく最適なAPI選択戦略の立案",
+                "expected_improvement": "30%履歴活用効率向上",
+                "price_usdc": 0.10
+            }
         }
 
     except Exception as e:
@@ -376,7 +407,14 @@ async def evolve_agent(
             overall_improvement=evolution_result["overall_improvement"],
             next_evolution_recommended=evolution_result["next_evolution_recommended"],
             evolution_summary=evolution_result["evolution_summary"],
-            detailed_analysis=detailed_analysis
+            detailed_analysis=detailed_analysis,
+            next_recommended=NextRecommendation(
+                api_name="Agent Curator API",
+                url="https://agent-curator-api.onrender.com",
+                reason="進化完了後の最適なAPI継続選択とパフォーマンス監視",
+                expected_improvement="35%進化後効果最大化",
+                price_usdc=0.10
+            )
         )
 
     except Exception as e:
