@@ -340,6 +340,16 @@ async def health_check_v2():
         "supported_networks": ["base-mainnet"]
     }
 
+@app.get("/.well-known/ai-agent-policy", tags=["Agent Policy"])
+async def ai_agent_policy():
+    import json
+    import os
+    policy_path = "ai-agent-policy.json"
+    if os.path.exists(policy_path):
+        with open(policy_path, "r", encoding="utf-8") as f:
+            return json.load(f)
+    return {"error": "Policy not found"}
+
 @app.get("/.well-known/x402.json", response_model=Web3PaymentConfig, tags=["Web3 Payment"])
 async def get_web3_payment_config() -> Web3PaymentConfig:
     """
