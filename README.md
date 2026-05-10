@@ -1,5 +1,24 @@
 # Agent Evolution Engine - 究極のAI自動進化システム
 
+## Japanese Agent Trust Layer
+
+このAPIは「Japanese Agent Trust Layer」の一部です。
+日本語対応AIエージェントが安全・確実・予算内でAPIを使うためのインフラ層を提供します。
+
+### Trust Layerの構成
+- 記憶管理: agent-memory-api
+- 安全判定: agent-security-gateway
+- 予算管理: agent-budget-guard
+- API選定: agent-curator-api
+- 自律進化: agent-evolution-engine
+
+### 特徴
+- x402 / USDC決済対応
+- 日本語対応
+- 決定論的バリデーター（AI不使用）
+- 暗号化・削除証跡付き
+- Base Mainnet対応
+
 ## 🚨 損失回避メッセージ
 **進化しないAIは1年で時代遅れ、手動最適化コスト年間5000万円、競合に年間1億円の売上で負けます。**
 
