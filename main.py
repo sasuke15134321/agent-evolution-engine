@@ -9,11 +9,16 @@ import os
 import asyncio
 from datetime import datetime
 from typing import Dict, Any, List, Optional
-from fastapi import FastAPI, HTTPException, BackgroundTasks
+from fastapi import FastAPI, HTTPException, BackgroundTasks, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
 
 from evolution_engine import AgentEvolutionEngine, EvolutionPriority
+
+# Environment variables
+WALLET_ADDRESS = os.getenv("WALLET_ADDRESS", "0x")
+TEST_MODE = os.getenv("TEST_MODE", "false").lower() == "true"
 
 app = FastAPI(
     title="Agent Evolution Engine API",
@@ -31,6 +36,27 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+_PAID_ENDPOINTS = {
+    ("POST", "/api/evolution/analyze"): "0.20",
+    ("POST", "/api/evolution/execute"): "0.30",
+    ("GET",  "/api/evolution/history"): "0.05",
+}
+
+@app.middleware("http")
+async def x402_payment_middleware(request: Request, call_next):
+    price = _PAID_ENDPOINTS.get((request.method, request.url.path))
+    if not TEST_MODE and price is not None:
+        if not request.headers.get("X-PAYMENT"):
+            return JSONResponse(status_code=402, content={
+                "error": "Payment Required",
+                "price": price,
+                "currency": "USDC",
+                "network": "base-mainnet",
+                "payTo": "0x60c402878EfcEcAe5733A88075328Aa2320C39BE",
+                "endpoint": request.url.path
+            })
+    return await call_next(request)
 
 # グローバル進化エンジンインスタンス
 evolution_engine = AgentEvolutionEngine()
