@@ -1,0 +1,34 @@
+openapi: "3.0.0"
+info:
+  title: Agent Evolution Engine API
+  version: "1.0.0"
+  description: 5つのAPIを統合した自律進化エンジン
+servers:
+  - url: https://agent-evolution-engine.onrender.com
+paths:
+  /api/evolution/analyze:
+    post:
+      operationId: analyze_evolution
+      summary: Analyze and optimize an AI agent ecosystem
+      description: >
+        Use this to analyze and optimize an AI agent ecosystem.
+        Integrates trend, memory, security, budget, and curator APIs.
+        Use when comprehensive ecosystem analysis is needed.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                context:
+                  type: string
+                  description: Current ecosystem context and goals
+                agent_id:
+                  type: string
+                  description: Identifier for the agent being analyzed
+      responses:
+        "200":
+          description: Success
+        "402":
+          description: Payment required (x402)

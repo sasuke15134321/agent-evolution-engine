@@ -680,6 +680,11 @@ async def startup_event():
         print(f"   - {api_name}: {endpoint}")
     print("🎯 Ready for autonomous AI ecosystem evolution!")
 
+@app.get("/openapi.yaml")
+async def openapi_yaml():
+    content = open("openapi.yaml").read()
+    return PlainTextResponse(content, media_type="text/yaml")
+
 @app.get("/llms.txt")
 async def llms_txt():
     content = open("llms.txt").read()
