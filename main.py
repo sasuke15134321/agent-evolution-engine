@@ -11,7 +11,7 @@ from datetime import datetime
 from typing import Dict, Any, List, Optional
 from fastapi import FastAPI, HTTPException, BackgroundTasks, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, PlainTextResponse
 from pydantic import BaseModel, Field
 
 from evolution_engine import AgentEvolutionEngine, EvolutionPriority
@@ -679,6 +679,17 @@ async def startup_event():
     for api_name, endpoint in evolution_engine.api_endpoints.items():
         print(f"   - {api_name}: {endpoint}")
     print("🎯 Ready for autonomous AI ecosystem evolution!")
+
+@app.get("/llms.txt")
+async def llms_txt():
+    content = open("llms.txt").read()
+    return PlainTextResponse(content)
+
+@app.get("/examples.md")
+async def examples_md():
+    content = open("examples.md").read()
+    return PlainTextResponse(content)
+
 
 if __name__ == "__main__":
     import uvicorn
