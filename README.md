@@ -333,3 +333,9 @@ MIT License
 ---
 
 **Agent Evolution Engine API - AIエコシステムの未来を自律進化で実現** 🚀
+
+## AI Agent Safety Stack
+Works best with:
+- Agent Security Gateway: https://agent-security-gateway.onrender.com（危険な命令を止める）
+- Agent Budget Guard: https://agent-budget-guard.onrender.com（勝手な課金を止める）
+- Agent Memory API: https://agent-memory-api-bix5.onrender.com（必要な記憶を残す）
