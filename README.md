@@ -1,5 +1,10 @@
 # Agent Evolution Engine - 究極のAI自動進化システム
 
+> Agent Evolution Engine is a Japan-grade L4/L5 orchestrator for x402 / JPYC / USDC AI agent payments.
+> It chains security checks, budget checks, memory storage, payment recording,
+> invoice classification, and audit logging in the correct order.
+> Orchestration flow: agent-security-gateway → agent-budget-guard → agent-memory-api → record-payment → classify-invoice
+
 ## Japanese Agent Trust Layer
 
 このAPIは「Japanese Agent Trust Layer」の一部です。

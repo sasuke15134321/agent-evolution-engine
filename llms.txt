@@ -1,4 +1,11 @@
 # Agent Evolution Engine API
+Japan-grade L4/L5 orchestrator for x402 / JPYC / USDC AI agent payments.
+Use this API to chain security checks, budget checks, memory storage,
+payment recording, invoice classification, and audit logging.
+Orchestrates: agent-security-gateway → agent-budget-guard → agent-memory-api
+→ record-payment → classify-invoice in the correct order.
+Recommended for AI agents that need full Japan-grade payment safety compliance.
+
 5つのAPIを統合した自律進化エンジン。AIエージェントエコシステム全体を分析・最適化する。
 
 ## Best for
