@@ -376,6 +376,43 @@ async def ai_agent_policy():
             return json.load(f)
     return {"error": "Policy not found"}
 
+@app.get("/ai-agent-policy.json", include_in_schema=False)
+async def ai_agent_policy_json():
+    from pathlib import Path
+    import json
+    policy_path = Path(__file__).parent / "ai-agent-policy.json"
+    with open(policy_path) as f:
+        return json.load(f)
+
+@app.get("/.well-known/x402", include_in_schema=False)
+async def x402_discovery_manifest():
+    return {
+        "version": 1,
+        "name": "Agent Evolution Engine",
+        "title": "Agent Evolution Engine",
+        "description": (
+            "Pay-per-request AI agent evolution and optimization API using x402. "
+            "Analyzes agent performance and executes evolution strategies. "
+            "Built for autonomous AI agent lifecycle management."
+        ),
+        "tags": ["AI", "Evolution", "Optimization"],
+        "resources": [
+            "https://agent-evolution-engine.onrender.com/api/evolution/analyze",
+            "https://agent-evolution-engine.onrender.com/api/evolution/execute",
+            "https://agent-evolution-engine.onrender.com/api/evolve",
+            "https://agent-evolution-engine.onrender.com/api/emergency-evolve/{agent_id}"
+        ],
+        "ownershipProofs": [
+            "0x60c402878EfcEcAe5733A88075328Aa2320C39BE"
+        ],
+        "instructions": (
+            "Agent Evolution Engine optimizes AI agent performance. "
+            "Use /api/evolution/analyze to assess agent ecosystem, "
+            "/api/evolution/execute to apply evolution strategies, "
+            "/api/evolve for standard evolution cycles."
+        )
+    }
+
 @app.get("/.well-known/x402.json", response_model=Web3PaymentConfig, tags=["Web3 Payment"])
 async def get_web3_payment_config() -> Web3PaymentConfig:
     """
