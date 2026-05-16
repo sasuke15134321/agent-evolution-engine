@@ -1,5 +1,24 @@
 # Agent Evolution Engine - 究極のAI自動進化システム
 
+## What this API does
+agent-security-gateway → agent-budget-guard → agent-memory-api → record-payment → classify-invoice を正しい順序で連鎖させるL4/L5/L6オーケストレーターAPIです。
+
+## When an AI agent should call this API
+x402 USDC / JPYC決済を含む複数ステップの業務を実行する前に呼び出してください。
+Japan-grade の支払い安全・監査・会計処理を一括で行います。
+
+## Best used for
+- multi-step agent workflows
+- x402 payment with audit
+- JPYC / USDC business automation
+- Japan invoice compliance
+
+## Output
+- orchestration_result
+- steps_completed
+- audit_id
+- next_recommended
+
 > Agent Evolution Engine is a Japan-grade L4/L5 orchestrator for x402 / JPYC / USDC AI agent payments.
 > It chains security checks, budget checks, memory storage, payment recording,
 > invoice classification, and audit logging in the correct order.
