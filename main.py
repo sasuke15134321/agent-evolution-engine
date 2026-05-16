@@ -397,10 +397,10 @@ async def x402_discovery_manifest():
         ),
         "tags": ["AI", "Evolution", "Optimization"],
         "resources": [
-            "https://agent-evolution-engine.onrender.com/api/evolution/analyze",
-            "https://agent-evolution-engine.onrender.com/api/evolution/execute",
-            "https://agent-evolution-engine.onrender.com/api/evolve",
-            "https://agent-evolution-engine.onrender.com/api/emergency-evolve/{agent_id}"
+            {"url": "https://agent-evolution-engine.onrender.com/api/evolution/analyze", "method": "POST"},
+            {"url": "https://agent-evolution-engine.onrender.com/api/evolution/execute", "method": "POST"},
+            {"url": "https://agent-evolution-engine.onrender.com/api/evolve", "method": "POST"},
+            {"url": "https://agent-evolution-engine.onrender.com/api/emergency-evolve/{agent_id}", "method": "POST"},
         ],
         "ownershipProofs": [
             "0x60c402878EfcEcAe5733A88075328Aa2320C39BE"
