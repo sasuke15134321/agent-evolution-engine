@@ -1,23 +1,50 @@
 # Agent Evolution Engine - 究極のAI自動進化システム
 
+## AEO-ready for AI agents
+This API is designed to be understandable and callable by AI agents.
+It includes structured information for:
+- what this API does
+- when an AI agent should call this API
+- when not to use this API
+- best used before / after
+- example request / response
+- next_recommended
+
+## Why this matters
+AI is moving from answering questions to managing real workflows.
+Personal finance is an early example: AI can help users understand spending, subscriptions, investments, and budgets based on connected financial data.
+The next layer is not only human spending management, but also spending, safety, memory, and audit control for AI agents themselves.
+As AI agents begin to call paid APIs, use x402 payments, store long-term memory, and interact with other agents, they need structured guardrails before and after execution.
+This API is part of an AI Agent Payment Safety Stack.
+
 ## What this API does
 agent-security-gateway → agent-budget-guard → agent-memory-api → record-payment → classify-invoice を正しい順序で連鎖させるL4/L5/L6オーケストレーターAPIです。
 
 ## When an AI agent should call this API
-x402 USDC / JPYC決済を含む複数ステップの業務を実行する前に呼び出してください。
-Japan-grade の支払い安全・監査・会計処理を一括で行います。
+x402 USDC / JPYC決済を含む複数ステップの業務を自動化する前に呼び出してください。
 
-## Best used for
+## When not to use this API
+- 単一APIの呼び出しのみの場合
+- テスト・デバッグ目的の単体確認
+
+## Best used before
 - multi-step agent workflows
-- x402 payment with audit
-- JPYC / USDC business automation
-- Japan invoice compliance
+- autonomous x402 payment flows
+
+## Best used after
+- task initialization
+- agent goal setting
 
 ## Output
 - orchestration_result
 - steps_completed
 - audit_id
 - next_recommended
+
+## Related APIs
+- Agent Security Gateway: first step in orchestration
+- Agent Budget Guard: second step in orchestration
+- Agent Memory API: final step for audit storage
 
 > Agent Evolution Engine is a Japan-grade L4/L5 orchestrator for x402 / JPYC / USDC AI agent payments.
 > It chains security checks, budget checks, memory storage, payment recording,
