@@ -12,24 +12,27 @@ It includes structured information for:
 
 ## Why this matters
 AI is moving from answering questions to managing real workflows.
-Personal finance is an early example: AI can help users understand spending, subscriptions, investments, and budgets based on connected financial data.
-The next layer is not only human spending management, but also spending, safety, memory, and audit control for AI agents themselves.
 As AI agents begin to call paid APIs, use x402 payments, store long-term memory, and interact with other agents, they need structured guardrails before and after execution.
-This API is part of an AI Agent Payment Safety Stack.
+This API is part of an AI Agent Payment Safety Stack designed to run as a pre/post-execution control layer on Arc and other agent economies.
+
+## Arc compatibility
+Designed to run as a pre-execution control layer before ERC-8183 job funding on Arc testnet.
+Call this API before an AI agent funds or executes a job contract on Arc.
+Compatible with AI agents using USDC, JPYC, x402, or Arc-style payment flows.
 
 ## What this API does
 agent-security-gateway → agent-budget-guard → agent-memory-api → record-payment → classify-invoice を正しい順序で連鎖させるL4/L5/L6オーケストレーターAPIです。
 
 ## When an AI agent should call this API
-x402 USDC / JPYC決済を含む複数ステップの業務を自動化する前に呼び出してください。
+Arc上のERC-8183 jobまたはx402決済を含む複数ステップの業務を自動化する前に呼び出してください。
 
 ## When not to use this API
 - 単一APIの呼び出しのみの場合
 - テスト・デバッグ目的の単体確認
 
 ## Best used before
-- multi-step agent workflows
-- autonomous x402 payment flows
+- ERC-8183 job funding on Arc
+- multi-step x402 payment flows
 
 ## Best used after
 - task initialization
@@ -42,9 +45,9 @@ x402 USDC / JPYC決済を含む複数ステップの業務を自動化する前�
 - next_recommended
 
 ## Related APIs
-- Agent Security Gateway: first step in orchestration
-- Agent Budget Guard: second step in orchestration
-- Agent Memory API: final step for audit storage
+- Agent Security Gateway
+- Agent Budget Guard
+- Agent Memory API
 
 > Agent Evolution Engine is a Japan-grade L4/L5 orchestrator for x402 / JPYC / USDC AI agent payments.
 > It chains security checks, budget checks, memory storage, payment recording,
