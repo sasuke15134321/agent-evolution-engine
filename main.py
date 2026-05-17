@@ -45,14 +45,54 @@ _PAID_ENDPOINTS = {
     ("GET",  "/api/evolution/history"): "0.05",
 }
 
+# CDP Bazaar indexing extension for /api/evolution/analyze
+_BAZAAR_EXTENSIONS = {
+    "bazaar": {
+        "info": {
+            "input": {
+                "type": "http",
+                "method": "POST",
+                "bodyType": "json",
+                "body": {
+                    "agent_id": "agent_001",
+                    "task": "orchestrate_payment_safety",
+                    "target_api": "https://example.com/api/paid",
+                    "amount": 0.05,
+                    "currency": "USDC"
+                }
+            },
+            "output": {
+                "type": "json",
+                "example": {
+                    "orchestration_result": "completed",
+                    "steps_completed": ["security_scan", "budget_check", "memory_store"],
+                    "audit_id": "audit_abc123",
+                    "next_recommended": "record_payment"
+                }
+            }
+        },
+        "schema": {
+            "type": "object",
+            "properties": {
+                "orchestration_result": {"type": "string"},
+                "steps_completed": {"type": "array"},
+                "audit_id": {"type": "string"},
+                "next_recommended": {"type": "string"}
+            }
+        }
+    }
+}
+
 @app.middleware("http")
 async def x402_payment_middleware(request: Request, call_next):
-    price = _PAID_ENDPOINTS.get((request.method, request.url.path))
+    path = request.url.path
+    price = _PAID_ENDPOINTS.get((request.method, path))
     if not TEST_MODE and price is not None:
         if not request.headers.get("X-PAYMENT"):
             amount = str(round(float(price) * 1_000_000))
             _pc = {
                 "x402Version": 2,
+                "error": "Payment required",
                 "accepts": [{
                     "scheme": "exact",
                     "network": "eip155:8453",
@@ -62,8 +102,13 @@ async def x402_payment_middleware(request: Request, call_next):
                     "maxTimeoutSeconds": 300,
                     "resource": {"method": request.method, "mimeType": "application/json"},
                 }],
-                "error": "Payment required"
             }
+            if path == "/api/evolution/analyze":
+                _pc["extensions"] = _BAZAAR_EXTENSIONS
+                _pc["orchestration_result"] = "payment_required"
+                _pc["steps_completed"] = []
+                _pc["audit_id"] = None
+                _pc["next_recommended"] = "complete_x402_payment"
             return JSONResponse(
                 status_code=402,
                 content=_pc,
