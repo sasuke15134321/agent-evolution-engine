@@ -88,7 +88,7 @@ async def x402_payment_middleware(request: Request, call_next):
     path = request.url.path
     price = _PAID_ENDPOINTS.get((request.method, path))
     if not TEST_MODE and price is not None:
-        if not request.headers.get("X-PAYMENT"):
+        if not (request.headers.get("PAYMENT-SIGNATURE") or request.headers.get("X-PAYMENT")):
             amount = str(round(float(price) * 1_000_000))
             _pc = {
                 "x402Version": 2,
