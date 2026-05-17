@@ -104,6 +104,12 @@ async def x402_payment_middleware(request: Request, call_next):
                 }],
             }
             if path == "/api/evolution/analyze":
+                _pc["resource"] = {
+                    "url": "https://agent-evolution-engine.onrender.com/api/evolution/analyze",
+                    "method": "POST",
+                    "description": "Orchestrate security, budget, memory, and audit checks for AI agent workflows",
+                    "mimeType": "application/json"
+                }
                 _pc["extensions"] = _BAZAAR_EXTENSIONS
                 _pc["orchestration_result"] = "payment_required"
                 _pc["steps_completed"] = []
