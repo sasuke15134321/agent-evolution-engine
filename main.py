@@ -7,6 +7,8 @@ AIエコシステム自律進化システム
 
 import os
 import asyncio
+import base64
+import json
 from datetime import datetime
 from typing import Dict, Any, List, Optional
 from fastapi import FastAPI, HTTPException, BackgroundTasks, Request
@@ -48,14 +50,25 @@ async def x402_payment_middleware(request: Request, call_next):
     price = _PAID_ENDPOINTS.get((request.method, request.url.path))
     if not TEST_MODE and price is not None:
         if not request.headers.get("X-PAYMENT"):
-            return JSONResponse(status_code=402, content={
-                "error": "Payment Required",
-                "price": price,
-                "currency": "USDC",
-                "network": "base-mainnet",
-                "payTo": "0x60c402878EfcEcAe5733A88075328Aa2320C39BE",
-                "endpoint": request.url.path
-            })
+            amount = str(round(float(price) * 1_000_000))
+            _pc = {
+                "x402Version": 2,
+                "accepts": [{
+                    "scheme": "exact",
+                    "network": "eip155:8453",
+                    "amount": amount,
+                    "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                    "payTo": "0x60c402878EfcEcAe5733A88075328Aa2320C39BE",
+                    "maxTimeoutSeconds": 300,
+                    "resource": {"method": request.method, "mimeType": "application/json"},
+                }],
+                "error": "Payment required"
+            }
+            return JSONResponse(
+                status_code=402,
+                content=_pc,
+                headers={"PAYMENT-REQUIRED": base64.b64encode(json.dumps(_pc).encode()).decode()}
+            )
     return await call_next(request)
 
 # グローバル進化エンジンインスタンス
