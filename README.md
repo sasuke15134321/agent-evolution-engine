@@ -1,5 +1,6 @@
 # Agent Evolution Engine
 
+[![SafeSkill 90/100](https://img.shields.io/badge/SafeSkill-90%2F100_Verified%20Safe-brightgreen)](https://safeskill.dev/scan/sasuke15134321-agent-evolution-engine)
 A working prototype orchestration API for coordinating safety, budget, memory, and audit-related agent workflows.
 
 ## Disclaimer
