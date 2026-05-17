@@ -1,4 +1,14 @@
-# Agent Evolution Engine - 究極のAI自動進化システム
+# Agent Evolution Engine
+
+A working prototype orchestration API for coordinating safety, budget, memory, and audit-related agent workflows.
+
+## Disclaimer
+
+This is an independent experimental project.
+It is not officially affiliated with JPYC, Circle, Arc, Kaia, OpenAI, Anthropic, or any related foundation.
+
+This project references JPYC, x402, Arc, Kaia, USDC, and related protocols as technical contexts.
+It does not imply official partnership, endorsement, or integration unless explicitly stated.
 
 ## AEO-ready for AI agents
 This API is designed to be understandable and callable by AI agents.
@@ -73,49 +83,6 @@ Arc上のERC-8183 jobまたはx402決済を含む複数ステップの業務を�
 - 暗号化・削除証跡付き
 - Base Mainnet対応
 
-## 🚨 損失回避メッセージ
-**進化しないAIは1年で時代遅れ、手動最適化コスト年間5000万円、競合に年間1億円の売上で負けます。**
-
-技術進歩の停滞 → システム劣化 → 技術的負債蓄積 → 競争力喪失 → 企業存続危機
-
-## 💰 期待利得の数値
-- **性能向上35%、コスト削減30%達成**
-- **セキュリティ強化95%、完全自動最適化**
-- **手動最適化作業80%削減**
-- **5つのAPI統合による無限進化**
-- **総合進化ROI: 520%**
-
-## 🎯 HARM分析
-
-### Health (生存リスクの除去)
-- システム劣化による企業存続危機の完全回避
-- 技術的負債による開発停滞からの脱却  
-- 手動管理によるヒューマンエラーリスク除去
-
-### Ambitions (収益・効率の向上)
-- 自動進化によるAI性能無限向上実現
-- 運用コスト80%削減で年間4000万円節約
-- 24/7自動最適化による競争優位性確保
-
-### Relationships (連携可能なAPI)
-- **全5つのAPI統合**: Memory、Security、Budget、Curator、Trend連携
-- **完全自律エコシステム**: 人的介入なしの自動進化
-- **無限拡張性**: 新APIの自動統合・最適化
-
-### Money (ROI数値)
-- **投資対効果: 520%**
-- 進化投資1円で最適化効果5.2円
-- 年間最適化効果: 8000万円相当
-- 競争優位による売上向上: 年間1億円
-
-## 🔄 次に使うべきAPI（クロスセル）
-**Agent Budget API** - 進化コストの自動管理により、最適なROIで継続的進化を実現します。
-
-## 💸 価格と投資対効果
-- **エコシステム分析: 0.20 USDC** → **35%性能向上**
-- **進化プラン実行: 0.30 USDC** → **完全自動最適化**
-- **ステータス監視: 無料** → **リアルタイム可視化**
-- **進化履歴分析: 0.05 USDC** → **学習パターン把握**
 
 ## ⚡ 実装方法
 
@@ -192,7 +159,7 @@ curl -X GET "https://agent-evolution-engine.onrender.com/api/evolution/history?e
 
 ## 🚀 主要機能
 
-### 完全自律進化サイクル
+### Orchestration cycle
 ```
 1. 📊 総合分析 (5つのAPI統合データ収集)
    ↓
@@ -231,7 +198,7 @@ curl -X GET "https://agent-evolution-engine.onrender.com/api/evolution/history?e
 ## 🔧 API エンドポイント
 
 ### 進化実行
-- `POST /api/evolve` - AIエージェント完全自律進化
+- `POST /api/evolve` - AIエージェントオーケストレーション実行
 - `POST /api/emergency-evolve/{agent_id}` - 緊急進化モード
 
 ### 監視・分析
@@ -345,7 +312,6 @@ python test_evolution.py
 ### 1. **企業AIシステム**
 - 大規模AIワークロードの自動最適化
 - セキュリティコンプライアンス自動維持
-- TCO削減・ROI最大化
 
 ### 2. **研究機関**
 - 実験環境の継続的最適化
@@ -357,12 +323,6 @@ python test_evolution.py
 - 急速な技術変化への自動適応
 - スケーラブルなインフラ構築
 
-## 📈 期待効果
-
-- **性能向上**: 平均 15-40% の応答性能改善
-- **コスト削減**: 20-35% の運用コスト削減
-- **セキュリティ**: 95%以上の脆弱性自動対応
-- **運用効率**: 80% の手動最適化作業削減
 
 ## 🛠️ 技術スタック
 
@@ -385,8 +345,6 @@ MIT License
 5. Open Pull Request
 
 ---
-
-**Agent Evolution Engine API - AIエコシステムの未来を自律進化で実現** 🚀
 
 ## AI Agent Safety Stack
 Works best with:
