@@ -6,3 +6,4 @@ python-dotenv>=1.0.0
 asyncio
 dataclasses
 typing-extensions>=4.8.0
+cryptography>=42.0.0
