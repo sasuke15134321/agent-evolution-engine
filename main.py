@@ -17,6 +17,7 @@ from fastapi.responses import JSONResponse, PlainTextResponse
 from pydantic import BaseModel, Field
 
 from evolution_engine import AgentEvolutionEngine, EvolutionPriority
+from payment_verifier import PaymentVerifier
 
 # Environment variables
 WALLET_ADDRESS = os.getenv("WALLET_ADDRESS", "0x")
@@ -124,6 +125,7 @@ async def x402_payment_middleware(request: Request, call_next):
 
 # グローバル進化エンジンインスタンス
 evolution_engine = AgentEvolutionEngine()
+payment_verifier = PaymentVerifier()
 
 # Pydantic Models for new API endpoints
 class NextRecommendation(BaseModel):
@@ -240,7 +242,7 @@ async def root():
 # New Web3-enabled API endpoints with USDC pricing
 
 @app.post("/api/evolution/analyze", response_model=EcosystemAnalyzeResponse, tags=["Evolution - Web3"])
-async def analyze_ecosystem(request: EcosystemAnalyzeRequest) -> EcosystemAnalyzeResponse:
+async def analyze_ecosystem(request: EcosystemAnalyzeRequest, http_request: Request) -> EcosystemAnalyzeResponse:
     """
     エコシステム進化分析エンドポイント（0.20 USDC）
 
@@ -252,6 +254,15 @@ async def analyze_ecosystem(request: EcosystemAnalyzeRequest) -> EcosystemAnalyz
     - 制約条件を考慮した実現可能性検証
     - コスト効率とリスクを両立した実装手順提示
     """
+    if not TEST_MODE:
+        payment_header = http_request.headers.get("PAYMENT-SIGNATURE") or http_request.headers.get("X-PAYMENT")
+        if not payment_header:
+            _pc = {"x402Version": 2, "error": "Payment required", "accepts": [{"scheme": "exact", "network": "eip155:8453", "amount": "200000", "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913", "payTo": "0x60c402878EfcEcAe5733A88075328Aa2320C39BE", "maxTimeoutSeconds": 300}]}
+            return JSONResponse(status_code=402, content=_pc, headers={"PAYMENT-REQUIRED": base64.b64encode(json.dumps(_pc).encode()).decode()})
+        is_valid = await payment_verifier.verify_payment(payment_header, "0x60c402878EfcEcAe5733A88075328Aa2320C39BE", "0.20")
+        if not is_valid:
+            raise HTTPException(status_code=402, detail="Payment verification failed")
+
     try:
         # エコシステム分析実行
         ecosystem_analysis = await evolution_engine.analyze_ecosystem_for_evolution(
