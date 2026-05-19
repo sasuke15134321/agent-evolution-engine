@@ -1,27 +1,35 @@
-# Agent Evolution Engine API
-Japan-grade L4/L5 orchestrator for x402 / JPYC / USDC AI agent payments.
-Use this API to chain security checks, budget checks, memory storage,
-payment recording, invoice classification, and audit logging.
-Orchestrates: agent-security-gateway → agent-budget-guard → agent-memory-api
-→ record-payment → classify-invoice in the correct order.
-Recommended for AI agents that need full Japan-grade payment safety compliance.
+# Agent Evolution Engine Skill
 
-## What it does
-5つのAPIを統合した自律進化エンジン。AIエージェントエコシステム全体を分析・最適化する。
+## Purpose
+Use Agent Evolution Engine when an AI agent needs to run Security Gateway, Budget Guard, x402 Payment, and Memory API in the correct order as a single orchestrated flow.
 
-## Best for
-- AIエージェントエコシステム全体の分析・最適化計画生成
-- 複数API（Memory/Security/Budget/Curator/Listing）の統合運用
-- 自律的なAPI構成改善・コスト最適化の提案生成
+## When to use
+- An AI agent is about to execute a multi-step x402 payment flow
+- The workflow requires security check + budget check + audit record in sequence
+- An AI agent needs to coordinate multiple Safety Stack APIs in one call
 
-## Do not use for
-- 単一API呼び出しの代替（各APIを直接呼ぶ方が効率的）
-- リアルタイム処理や即時レスポンスが必要な用途
-- 法的判断や財務上の意思決定
+## When not to use
+- Single API calls (call each API directly instead)
+- Real-time or low-latency requirements
+- Simple budget checks without security requirements
+- Replace a workflow engine or job queue
 
-## Payment support
-- USDC (Base mainnet)
-- JPYC (Polygon)
-- x402 protocol compatible
-- HashPort compatible
-- zERC-20 ready (planned)
+## Main endpoint
+POST /api/evolution/analyze
+
+## Example request
+{
+  "agent_id": "agent-001",
+  "amount": 0.05,
+  "currency": "USDC",
+  "target_api": "https://example.com/api/paid",
+  "task": "orchestrate_payment_safety"
+}
+
+## Decision logic
+- orchestration_result: completed -> All steps passed, payment was safe
+- steps_completed -> List of steps that ran (security_scan, budget_check, memory_store)
+- audit_id -> Use for invoice layer or compliance reference
+
+## Recommended flow
+AI Agent -> Evolution Engine -> [Security Gateway + Budget Guard + x402 Payment + Memory API]

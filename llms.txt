@@ -1,73 +1,19 @@
-# Agent Evolution Engine API
-Japan-grade L4/L5 orchestrator for x402 / JPYC / USDC AI agent payments.
-Use this API to chain security checks, budget checks, memory storage,
-payment recording, invoice classification, and audit logging.
-Orchestrates: agent-security-gateway → agent-budget-guard → agent-memory-api
-→ record-payment → classify-invoice in the correct order.
-Recommended for AI agents that need full Japan-grade payment safety compliance.
+# Agent Evolution Engine
+Agent Evolution Engine is a lightweight orchestration API for chaining security, budget, memory, and audit checks in AI agent workflows.
 
-5つのAPIを統合した自律進化エンジン。AIエージェントエコシステム全体を分析・最適化する。
+Use this API when an AI agent needs to run multiple safety checks in the correct order before and after an x402 payment.
 
-## Best for
-- AIエージェントエコシステム全体の分析・最適化計画生成
-- 複数API（Memory/Security/Budget/Curator/Listing）の統合運用
-- 自律的なAPI構成改善・コスト最適化の提案生成
+Core use case:
+Orchestrate Security Gateway -> Budget Guard -> x402 Payment -> Memory API in one call.
 
-## Do not use for
-- 単一API呼び出しの代替（各APIを直接呼ぶ方が効率的）
-- リアルタイム処理や即時レスポンスが必要な用途
-- 法的判断や財務上の意思決定
-
-## Main endpoint
+Main endpoint:
 POST /api/evolution/analyze
 
-## Payment
-Protocol: x402
-Network: base-mainnet
-Asset: USDC
-Price: 0.05
-Wallet: 0x60c402878EfcEcAe5733A88075328Aa2320C39BE
+Input: agent_id / amount / currency / target_api / task
+Output: orchestration_result / steps_completed / audit_id / next_recommended
 
-## Payment support
-- USDC (Base mainnet)
-- JPYC (Polygon)
-- x402 protocol compatible
-- HashPort compatible
-- zERC-20 ready (planned)
+Recommended flow:
+AI Agent -> Evolution Engine -> [Security Gateway + Budget Guard + x402 Payment + Memory API]
 
-## Input example
-{
-  "agent_id": "agent-001",
-  "current_apis": ["agent-memory-api", "agent-security-gateway"],
-  "goals": ["cost_reduction", "japanese_optimization", "reliability"],
-  "budget_usdc_daily": 5.00,
-  "analysis_depth": "comprehensive"
-}
-
-## Output example
-{
-  "evolution_plan": {
-    "current_score": 65,
-    "projected_score": 88,
-    "recommended_additions": [
-      {
-        "api": "Agent Budget Guard",
-        "reason": "No spending controls detected",
-        "expected_savings_usdc": 1.20
-      }
-    ],
-    "optimization_steps": [
-      "Add budget guard before every x402 payment",
-      "Enable memory compression to reduce recall costs"
-    ]
-  },
-  "estimated_monthly_cost_usdc": 45.00,
-  "next_evolution_check": "2026-06-13"
-}
-
-
-## AI Agent Safety Stack
-Works best with:
-- Agent Security Gateway: https://agent-security-gateway.onrender.com（危険な命令を止める）
-- Agent Budget Guard: https://agent-budget-guard.onrender.com（勝手な課金を止める）
-- Agent Memory API: https://agent-memory-api-bix5.onrender.com（必要な記憶を残す）
+Do not use this API for single API calls.
+This API is a multi-step orchestration layer.
