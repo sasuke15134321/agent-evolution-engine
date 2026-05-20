@@ -1,5 +1,8 @@
 # Agent Evolution Engine
 
+Analyze Security, Budget, Payment, Memory workflow traces for autonomous agents.
+Part of Agent Control Primitives — the missing workflow control layer in CDP Bazaar.
+
 A working prototype orchestration API for coordinating safety, budget, memory, and audit-related agent workflows.
 
 ## Part of AI Agent Infrastructure Safety Stack
