@@ -17,3 +17,9 @@ AI Agent -> Evolution Engine -> [Security Gateway + Budget Guard + x402 Payment 
 
 Do not use this API for single API calls.
 This API is a multi-step orchestration layer.
+
+## Note
+
+This API is part of Agent Control Primitives.
+Agent Control Primitives is not a payment rail, wallet, custodian, or x402 facilitator.
+It provides lightweight safety, budget, approval, context, and audit primitives around agent actions and payments.
