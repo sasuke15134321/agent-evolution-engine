@@ -7,3 +7,4 @@ asyncio
 dataclasses
 typing-extensions>=4.8.0
 cryptography>=42.0.0
+mcp>=1.6.0

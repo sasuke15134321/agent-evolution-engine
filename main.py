@@ -813,6 +813,66 @@ async def examples_md():
     return PlainTextResponse(content)
 
 
+# ── MCP server-card.json (Smithery tool discovery) ────────────────────────────
+
+@app.get("/.well-known/mcp/server-card.json", include_in_schema=False)
+async def mcp_server_card():
+    """Smithery MCP server card - tool discovery without MCP protocol scan"""
+    return {
+        "serverInfo": {
+            "name": "agent-evolution-engine",
+            "version": "1.0.0"
+        },
+        "tools": [
+            {
+                "name": "evolution_analyze",
+                "description": (
+                    "Orchestrate security, budget, memory, and audit checks for an AI agent workflow (0.20 USDC). "
+                    "Analyzes the current API ecosystem and returns an evolution plan with replacement/addition recommendations."
+                ),
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                        "ecosystem_id": {
+                            "type": "string",
+                            "description": "Unique identifier for the agent ecosystem being analyzed"
+                        },
+                        "current_apis": {
+                            "type": "array",
+                            "items": {"type": "string"},
+                            "description": "List of API URLs currently in use"
+                        },
+                        "goals": {
+                            "type": "array",
+                            "items": {"type": "string"},
+                            "description": "Evolution goals, e.g. improve_security / reduce_cost / add_audit_log"
+                        },
+                        "constraints": {
+                            "type": "object",
+                            "description": "Optional constraints, e.g. {max_cost_usdc: 1.0, latency_ms: 500}",
+                            "default": {}
+                        }
+                    },
+                    "required": ["ecosystem_id", "current_apis", "goals"]
+                }
+            }
+        ],
+        "resources": [],
+        "prompts": []
+    }
+
+
+# ── MCP Server mount (Smithery registration at /mcp) ──────────────────────────
+
+from mcp_server import mcp as _mcp_server
+
+try:
+    app.mount("/mcp", _mcp_server.streamable_http_app())
+except Exception as _mcp_err:
+    import logging
+    logging.getLogger(__name__).warning(f"MCP mount failed: {_mcp_err}")
+
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000, reload=True)
