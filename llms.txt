@@ -7,7 +7,7 @@ Core use case:
 Orchestrate Security Gateway -> Budget Guard -> x402 Payment -> Memory API in one call.
 
 Main endpoint:
-POST /api/evolution/analyze
+POST /api/evolution/analyze (0.20 USDC)
 
 Input: agent_id / amount / currency / target_api / task
 Output: orchestration_result / steps_completed / audit_id / next_recommended

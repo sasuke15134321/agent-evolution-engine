@@ -15,7 +15,7 @@ Use Agent Evolution Engine when an AI agent needs to run Security Gateway, Budge
 - Replace a workflow engine or job queue
 
 ## Main endpoint
-POST /api/evolution/analyze
+POST /api/evolution/analyze (0.20 USDC)
 
 ## Example request
 {
