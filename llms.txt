@@ -23,3 +23,15 @@ This API is a multi-step orchestration layer.
 This API is part of Agent Control Primitives.
 Agent Control Primitives is not a payment rail, wallet, custodian, or x402 facilitator.
 It provides lightweight safety, budget, approval, context, and audit primitives around agent actions and payments.
+
+## Agent Action Atom
+
+Agent Action Atom is a minimal external record unit for one AI-agent action.
+
+For this API, an Agent Action Atom can describe when an AI agent behavior, pattern, or evolution signal was analyzed, what target was reviewed, which policy or evaluation context applied, what evidence exists, and how the action can be reviewed later.
+
+Agent Action Atom is not an API endpoint, payment protocol, wallet, settlement layer, or legal liability engine by itself.
+
+It can support higher-level external control materials such as Evidence Packet, Boundary Trace, Fuse Record, Human Approval Trail, Permission Record, Dispute Record, and Liability Evidence.
+
+Current status: external control material, minimal record unit, not a protocol, not a standard.

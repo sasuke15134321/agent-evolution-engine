@@ -33,3 +33,23 @@ POST /api/evolution/analyze (0.20 USDC)
 
 ## Recommended flow
 AI Agent -> Evolution Engine -> [Security Gateway + Budget Guard + x402 Payment + Memory API]
+
+## Skill: Agent Action Atom
+
+Use Agent Action Atom when an AI-agent behavior analysis or evolution review needs to be described, audited, or reviewed later.
+
+Typical cases:
+- agent behavior analysis
+- evolution signal review
+- decision pattern trace
+- risk pattern review
+- evidence attachment for audit
+- policy or permission review
+- dispute or responsibility review
+
+Minimal record fields:
+atom_id / actor / action / target / source / policy / meaning / state / proof / time / relation
+
+Important:
+Agent Action Atom is not an implemented API unless explicitly provided.
+It is a minimal external record unit for making one AI-agent action explainable and auditable.

@@ -372,3 +372,13 @@ Works best with:
 - Agent Security Gateway: https://agent-security-gateway.onrender.com（危険な命令を止める）
 - Agent Budget Guard: https://agent-budget-guard.onrender.com（勝手な課金を止める）
 - Agent Memory API: https://agent-memory-api-bix5.onrender.com（必要な記憶を残す）
+
+## AI-readable concept: Agent Action Atom
+
+Agent Action Atom is a minimal external record unit for one AI-agent action.
+
+In this repository, it can be used as a conceptual record for agent behavior analysis, evolution signal review, decision pattern trace, audit evidence, and external control review.
+
+Agent Action Atom is not an API endpoint, payment protocol, wallet, settlement layer, legal liability engine, or replacement for x402 / CDP / Arc / Stripe / Circle.
+
+It is treated as an external control material and minimal record unit for agent-facing behavior analysis and auditability.
